@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>Armatron Motor Tuner</title>
+  <link rel="stylesheet" href="theme.css">
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Armatron Motor Tuner</h1>
+
+    <!-- New Multi Joint Setpoints Section -->
+    <div id="multiJointControl" class="container">
+      <h2>Multi Joint Setpoints</h2>
+      <div class="multi-joint-grid">
+        <!-- One column per joint -->
+        <div class="multi-joint-column" data-joint="1">
+          <h3>Joint 1</h3>
+          <label>Angle (deg):</label>
+          <input type="number" id="multiAngle-1" value="-1">
+          <label>Max Speed (dps):</label>
+          <input type="number" id="multiSpeed-1" value="100">
+        </div>
+        <div class="multi-joint-column" data-joint="2">
+          <h3>Joint 2</h3>
+          <label>Angle (deg):</label>
+          <input type="number" id="multiAngle-2" value="-1">
+          <label>Max Speed (dps):</label>
+          <input type="number" id="multiSpeed-2" value="100">
+        </div>
+        <div class="multi-joint-column" data-joint="3">
+          <h3>Joint 3</h3>
+          <label>Angle (deg):</label>
+          <input type="number" id="multiAngle-3" value="-1">
+          <label>Max Speed (dps):</label>
+          <input type="number" id="multiSpeed-3" value="100">
+        </div>
+        <div class="multi-joint-column" data-joint="4">
+          <h3>Joint 4</h3>
+          <label>Angle (deg):</label>
+          <input type="number" id="multiAngle-4" value="-1">
+          <label>Max Speed (dps):</label>
+          <input type="number" id="multiSpeed-4" value="100">
+        </div>
+        <div class="multi-joint-column" data-joint="5">
+          <h3>Joint 5</h3>
+          <label>Angle (deg):</label>
+          <input type="number" id="multiAngle-5" value="-1">
+          <label>Max Speed (dps):</label>
+          <input type="number" id="multiSpeed-5" value="100">
+        </div>
+        <div class="multi-joint-column" data-joint="6">
+          <h3>Joint 6</h3>
+          <label>Angle (deg):</label>
+          <input type="number" id="multiAngle-6" value="-1">
+          <label>Max Speed (dps):</label>
+          <input type="number" id="multiSpeed-6" value="100">
+        </div>
+        <div class="multi-joint-column" data-joint="7">
+          <h3>Joint 7</h3>
+          <label>Angle (deg):</label>
+          <input type="number" id="multiAngle-7" value="-1">
+          <label>Max Speed (dps):</label>
+          <input type="number" id="multiSpeed-7" value="100">
+        </div>
+      </div>
+      <div class="multi-joint-actions">
+        <button id="sendMultiJoint" onclick="sendMultiJointCommand()">Send Multi Joint Command</button>
+        <button id="emergencyStop" class="estop" onclick="emergencyStop()">ESTOP</button>
+      </div>
+      <div class="saved-sets">
+        <h3>Saved Angle Sets</h3>
+        <label for="setName">Set Name:</label>
+        <input type="text" id="setName" placeholder="Name this set">
+        <button onclick="saveCurrentSet()">Save Set</button>
+        <label for="savedSetsDropdown">Load Set:</label>
+        <select id="savedSetsDropdown" onchange="loadSavedSet()">
+          <option value="">-- Select Saved Set --</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Responsive Cards Grid for 7 joints -->
+    <div id="cardsGrid" class="cards-grid">
+      <!-- Card for Joint 1 -->
+      <div class="card" id="card-1">
+        <h3>Joint 1</h3>
+        <div class="card-content">
+          <div class="card-left">
+            <div class="data-section">
+              <div>Temperature: <span class="temp">--</span></div>
+              <div>Torque: <span class="torque">--</span></div>
+              <div>Speed: <span class="speed">--</span></div>
+              <div>Encoder: <span class="enc">--</span></div>
+              <div>Error: <span class="error">--</span></div>
+              <br>
+              <div>[Single Turn] Raw Angle: <span class="position">--</span></div>
+              <div>[Single Turn] Remapped Angle [rad]: <span class="pos_remapped_rad">--</span></div>
+              <div>[Single Turn] Remapped Angle [deg]: <span class="pos_remapped_deg">--</span></div>
+              <br>
+              <div>[Multi Turn] Raw Angle: <span class="position_multi">--</span></div>
+              <div>[Multi Turn] Remapped Angle [rad]: <span class="pos_remapped_rad_multi">--</span></div>
+              <div>[Multi Turn] Remapped Angle [deg]: <span class="pos_remapped_deg_multi">--</span></div>
+            </div>
+            <div class="local-controls">
+              <button onclick="sendLocalCmd({cmd:'motorOn', motorID:1})">Motor ON</button>
+              <button onclick="sendLocalCmd({cmd:'motorOff', motorID:1})">Motor OFF</button>
+              <button onclick="sendLocalCmd({cmd:'motorStop', motorID:1})">Motor STOP</button>
+              <button onclick="sendLocalCmd({cmd:'clearMotorError', motorID:1})">Clear Error</button>
+              <button onclick="sendLocalCmd({cmd:'syncSingleAndMulti', motorID:1})">Sync Angles</button>
+              <div>
+                <label>Torque (raw):</label>
+                <input type="number" id="torqueVal-1" value="50"/>
+                <button onclick="applyLocalTorque(1)">Set Torque</button>
+              </div>
+              <div>
+                <label>Position (deg):</label>
+                <input type="number" id="posVal-1" value="90"/>
+                <label>MaxSpeed (dps):</label>
+                <input type="number" id="posSpeedVal-1" value="360"/>
+                <label>Spin Direction (0/1):</label>
+                <input type="number" id="posSpinDir-1" value="0"/>
+                <button onclick="applyLocalPosition(1)">Set Position</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-right">
+            <canvas id="chart-1"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Card for Joint 2 -->
+      <div class="card" id="card-2">
+        <h3>Joint 2</h3>
+        <div class="card-content">
+          <div class="card-left">
+            <div class="data-section">
+              <div>Temperature: <span class="temp">--</span></div>
+              <div>Torque: <span class="torque">--</span></div>
+              <div>Speed: <span class="speed">--</span></div>
+              <div>Encoder: <span class="enc">--</span></div>
+              <div>Error: <span class="error">--</span></div>
+              <br>
+              <div>[Single Turn] Raw Angle: <span class="position">--</span></div>
+              <div>[Single Turn] Remapped Angle [rad]: <span class="pos_remapped_rad">--</span></div>
+              <div>[Single Turn] Remapped Angle [deg]: <span class="pos_remapped_deg">--</span></div>
+              <br>
+              <div>[Multi Turn] Raw Angle: <span class="position_multi">--</span></div>
+              <div>[Multi Turn] Remapped Angle [rad]: <span class="pos_remapped_rad_multi">--</span></div>
+              <div>[Multi Turn] Remapped Angle [deg]: <span class="pos_remapped_deg_multi">--</span></div>
+            </div>
+            <div class="local-controls">
+              <button onclick="sendLocalCmd({cmd:'motorOn', motorID:2})">Motor ON</button>
+              <button onclick="sendLocalCmd({cmd:'motorOff', motorID:2})">Motor OFF</button>
+              <button onclick="sendLocalCmd({cmd:'motorStop', motorID:2})">Motor STOP</button>
+              <button onclick="sendLocalCmd({cmd:'clearMotorError', motorID:2})">Clear Error</button>
+              <button onclick="sendLocalCmd({cmd:'syncSingleAndMulti', motorID:2})">Sync Angles</button>
+              <div>
+                <label>Torque (raw):</label>
+                <input type="number" id="torqueVal-2" value="50"/>
+                <button onclick="applyLocalTorque(2)">Set Torque</button>
+              </div>
+              <div>
+                <label>Position (deg):</label>
+                <input type="number" id="posVal-2" value="90"/>
+                <label>MaxSpeed (dps):</label>
+                <input type="number" id="posSpeedVal-2" value="360"/>
+                <label>Spin Direction (0/1):</label>
+                <input type="number" id="posSpinDir-2" value="0"/>
+                <button onclick="applyLocalPosition(2)">Set Position</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-right">
+            <canvas id="chart-2"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Card for Joint 3 -->
+      <div class="card" id="card-3">
+        <h3>Joint 3</h3>
+        <div class="card-content">
+          <div class="card-left">
+            <div class="data-section">
+              <div>Temperature: <span class="temp">--</span></div>
+              <div>Torque: <span class="torque">--</span></div>
+              <div>Speed: <span class="speed">--</span></div>
+              <div>Encoder: <span class="enc">--</span></div>
+              <div>Error: <span class="error">--</span></div>
+              <br>
+              <div>[Single Turn] Raw Angle: <span class="position">--</span></div>
+              <div>[Single Turn] Remapped Angle [rad]: <span class="pos_remapped_rad">--</span></div>
+              <div>[Single Turn] Remapped Angle [deg]: <span class="pos_remapped_deg">--</span></div>
+              <br>
+              <div>[Multi Turn] Raw Angle: <span class="position_multi">--</span></div>
+              <div>[Multi Turn] Remapped Angle [rad]: <span class="pos_remapped_rad_multi">--</span></div>
+              <div>[Multi Turn] Remapped Angle [deg]: <span class="pos_remapped_deg_multi">--</span></div>
+            </div>
+            <div class="local-controls">
+              <button onclick="sendLocalCmd({cmd:'motorOn', motorID:3})">Motor ON</button>
+              <button onclick="sendLocalCmd({cmd:'motorOff', motorID:3})">Motor OFF</button>
+              <button onclick="sendLocalCmd({cmd:'motorStop', motorID:3})">Motor STOP</button>
+              <button onclick="sendLocalCmd({cmd:'clearMotorError', motorID:3})">Clear Error</button>
+              <button onclick="sendLocalCmd({cmd:'syncSingleAndMulti', motorID:3})">Sync Angles</button>
+              <div>
+                <label>Torque (raw):</label>
+                <input type="number" id="torqueVal-3" value="50"/>
+                <button onclick="applyLocalTorque(3)">Set Torque</button>
+              </div>
+              <div>
+                <label>Position (deg):</label>
+                <input type="number" id="posVal-3" value="90"/>
+                <label>MaxSpeed (dps):</label>
+                <input type="number" id="posSpeedVal-3" value="360"/>
+                <label>Spin Direction (0/1):</label>
+                <input type="number" id="posSpinDir-3" value="0"/>
+                <button onclick="applyLocalPosition(3)">Set Position</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-right">
+            <canvas id="chart-3"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Card for Joint 4 -->
+      <div class="card" id="card-4">
+        <h3>Joint 4</h3>
+        <div class="card-content">
+          <div class="card-left">
+            <div class="data-section">
+              <div>Temperature: <span class="temp">--</span></div>
+              <div>Torque: <span class="torque">--</span></div>
+              <div>Speed: <span class="speed">--</span></div>
+              <div>Encoder: <span class="enc">--</span></div>
+              <div>Error: <span class="error">--</span></div>
+              <br>
+              <div>[Single Turn] Raw Angle: <span class="position">--</span></div>
+              <div>[Single Turn] Remapped Angle [rad]: <span class="pos_remapped_rad">--</span></div>
+              <div>[Single Turn] Remapped Angle [deg]: <span class="pos_remapped_deg">--</span></div>
+              <br>
+              <div>[Multi Turn] Raw Angle: <span class="position_multi">--</span></div>
+              <div>[Multi Turn] Remapped Angle [rad]: <span class="pos_remapped_rad_multi">--</span></div>
+              <div>[Multi Turn] Remapped Angle [deg]: <span class="pos_remapped_deg_multi">--</span></div>
+            </div>
+            <div class="local-controls">
+              <button onclick="sendLocalCmd({cmd:'motorOn', motorID:4})">Motor ON</button>
+              <button onclick="sendLocalCmd({cmd:'motorOff', motorID:4})">Motor OFF</button>
+              <button onclick="sendLocalCmd({cmd:'motorStop', motorID:4})">Motor STOP</button>
+              <button onclick="sendLocalCmd({cmd:'clearMotorError', motorID:4})">Clear Error</button>
+              <button onclick="sendLocalCmd({cmd:'syncSingleAndMulti', motorID:4})">Sync Angles</button>
+              <div>
+                <label>Torque (raw):</label>
+                <input type="number" id="torqueVal-4" value="50"/>
+                <button onclick="applyLocalTorque(4)">Set Torque</button>
+              </div>
+              <div>
+                <label>Position (deg):</label>
+                <input type="number" id="posVal-4" value="90"/>
+                <label>MaxSpeed (dps):</label>
+                <input type="number" id="posSpeedVal-4" value="360"/>
+                <label>Spin Direction (0/1):</label>
+                <input type="number" id="posSpinDir-4" value="0"/>
+                <button onclick="applyLocalPosition(4)">Set Position</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-right">
+            <canvas id="chart-4"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Card for Joint 5 -->
+      <div class="card" id="card-5">
+        <h3>Joint 5</h3>
+        <div class="card-content">
+          <div class="card-left">
+            <div class="data-section">
+              <div>Temperature: <span class="temp">--</span></div>
+              <div>Torque: <span class="torque">--</span></div>
+              <div>Speed: <span class="speed">--</span></div>
+              <div>Encoder: <span class="enc">--</span></div>
+              <div>Error: <span class="error">--</span></div>
+              <br>
+              <div>[Single Turn] Raw Angle: <span class="position">--</span></div>
+              <div>[Single Turn] Remapped Angle [rad]: <span class="pos_remapped_rad">--</span></div>
+              <div>[Single Turn] Remapped Angle [deg]: <span class="pos_remapped_deg">--</span></div>
+              <br>
+              <div>[Multi Turn] Raw Angle: <span class="position_multi">--</span></div>
+              <div>[Multi Turn] Remapped Angle [rad]: <span class="pos_remapped_rad_multi">--</span></div>
+              <div>[Multi Turn] Remapped Angle [deg]: <span class="pos_remapped_deg_multi">--</span></div>
+            </div>
+            <div class="local-controls">
+              <button onclick="sendLocalCmd({cmd:'motorOn', motorID:5})">Motor ON</button>
+              <button onclick="sendLocalCmd({cmd:'motorOff', motorID:5})">Motor OFF</button>
+              <button onclick="sendLocalCmd({cmd:'motorStop', motorID:5})">Motor STOP</button>
+              <button onclick="sendLocalCmd({cmd:'clearMotorError', motorID:5})">Clear Error</button>
+              <button onclick="sendLocalCmd({cmd:'syncSingleAndMulti', motorID:5})">Sync Angles</button>
+              <div>
+                <label>Torque (raw):</label>
+                <input type="number" id="torqueVal-5" value="50"/>
+                <button onclick="applyLocalTorque(5)">Set Torque</button>
+              </div>
+              <div>
+                <label>Position (deg):</label>
+                <input type="number" id="posVal-5" value="90"/>
+                <label>MaxSpeed (dps):</label>
+                <input type="number" id="posSpeedVal-5" value="360"/>
+                <label>Spin Direction (0/1):</label>
+                <input type="number" id="posSpinDir-5" value="0"/>
+                <button onclick="applyLocalPosition(5)">Set Position</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-right">
+            <canvas id="chart-5"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Card for Joint 6 -->
+      <div class="card" id="card-6">
+        <h3>Joint 6</h3>
+        <div class="card-content">
+          <div class="card-left">
+            <div class="data-section">
+              <div>Temperature: <span class="temp">--</span></div>
+              <div>Torque: <span class="torque">--</span></div>
+              <div>Speed: <span class="speed">--</span></div>
+              <div>Encoder: <span class="enc">--</span></div>
+              <div>Error: <span class="error">--</span></div>
+              <br>
+              <div>[Single Turn] Raw Angle: <span class="position">--</span></div>
+              <div>[Single Turn] Remapped Angle [rad]: <span class="pos_remapped_rad">--</span></div>
+              <div>[Single Turn] Remapped Angle [deg]: <span class="pos_remapped_deg">--</span></div>
+              <br>
+              <div>[Multi Turn] Raw Angle: <span class="position_multi">--</span></div>
+              <div>[Multi Turn] Remapped Angle [rad]: <span class="pos_remapped_rad_multi">--</span></div>
+              <div>[Multi Turn] Remapped Angle [deg]: <span class="pos_remapped_deg_multi">--</span></div>
+            </div>
+            <div class="local-controls">
+              <button onclick="sendLocalCmd({cmd:'motorOn', motorID:6})">Motor ON</button>
+              <button onclick="sendLocalCmd({cmd:'motorOff', motorID:6})">Motor OFF</button>
+              <button onclick="sendLocalCmd({cmd:'motorStop', motorID:6})">Motor STOP</button>
+              <button onclick="sendLocalCmd({cmd:'clearMotorError', motorID:6})">Clear Error</button>
+              <button onclick="sendLocalCmd({cmd:'syncSingleAndMulti', motorID:6})">Sync Angles</button>
+              <div>
+                <label>Torque (raw):</label>
+                <input type="number" id="torqueVal-6" value="50"/>
+                <button onclick="applyLocalTorque(6)">Set Torque</button>
+              </div>
+              <div>
+                <label>Position (deg):</label>
+                <input type="number" id="posVal-6" value="90"/>
+                <label>MaxSpeed (dps):</label>
+                <input type="number" id="posSpeedVal-6" value="360"/>
+                <label>Spin Direction (0/1):</label>
+                <input type="number" id="posSpinDir-6" value="0"/>
+                <button onclick="applyLocalPosition(6)">Set Position</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-right">
+            <canvas id="chart-6"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Card for Joint 7 -->
+      <div class="card" id="card-7">
+        <h3>Joint 7</h3>
+        <div class="card-content">
+          <div class="card-left">
+            <div class="data-section">
+              <div>Temperature: <span class="temp">--</span></div>
+              <div>Torque: <span class="torque">--</span></div>
+              <div>Speed: <span class="speed">--</span></div>
+              <div>Encoder: <span class="enc">--</span></div>
+              <div>Error: <span class="error">--</span></div>
+              <br>
+              <div>[Single Turn] Raw Angle: <span class="position">--</span></div>
+              <div>[Single Turn] Remapped Angle [rad]: <span class="pos_remapped_rad">--</span></div>
+              <div>[Single Turn] Remapped Angle [deg]: <span class="pos_remapped_deg">--</span></div>
+              <br>
+              <div>[Multi Turn] Raw Angle: <span class="position_multi">--</span></div>
+              <div>[Multi Turn] Remapped Angle [rad]: <span class="pos_remapped_rad_multi">--</span></div>
+              <div>[Multi Turn] Remapped Angle [deg]: <span class="pos_remapped_deg_multi">--</span></div>
+            </div>
+            <div class="local-controls">
+              <button onclick="sendLocalCmd({cmd:'motorOn', motorID:7})">Motor ON</button>
+              <button onclick="sendLocalCmd({cmd:'motorOff', motorID:7})">Motor OFF</button>
+              <button onclick="sendLocalCmd({cmd:'motorStop', motorID:7})">Motor STOP</button>
+              <button onclick="sendLocalCmd({cmd:'clearMotorError', motorID:7})">Clear Error</button>
+              <button onclick="sendLocalCmd({cmd:'syncSingleAndMulti', motorID:7})">Sync Angles</button>
+              <div>
+                <label>Torque (raw):</label>
+                <input type="number" id="torqueVal-7" value="50"/>
+                <button onclick="applyLocalTorque(7)">Set Torque</button>
+              </div>
+              <div>
+                <label>Position (deg):</label>
+                <input type="number" id="posVal-7" value="90"/>
+                <label>MaxSpeed (dps):</label>
+                <input type="number" id="posSpeedVal-7" value="360"/>
+                <label>Spin Direction (0/1):</label>
+                <input type="number" id="posSpinDir-7" value="0"/>
+                <button onclick="applyLocalPosition(7)">Set Position</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-right">
+            <canvas id="chart-7"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Global Controls for PID, Encoder, and Acceleration -->
+    <div class="global-controls container">
+      <h2>Global Motor Settings</h2>
+      <div class="sub-section">
+        <label for="globalJointSelect">Select Joint for Global Commands:</label>
+        <select id="globalJointSelect">
+          <option value="1">Joint 1</option>
+          <option value="2">Joint 2</option>
+          <option value="3">Joint 3</option>
+          <option value="4">Joint 4</option>
+          <option value="5">Joint 5</option>
+          <option value="6">Joint 6</option>
+          <option value="7">Joint 7</option>
+        </select>
+      </div>
+      <div class="sub-section">
+        <h3>PID Gains (Write to ROM)</h3>
+        <label>Angle Kp:</label>
+        <input id="angKp" type="number" value="100"/>
+        <label>Angle Ki:</label>
+        <input id="angKi" type="number" value="50"/>
+        <br/><br/>
+        <label>Speed Kp:</label>
+        <input id="spdKp" type="number" value="50"/>
+        <label>Speed Ki:</label>
+        <input id="spdKi" type="number" value="20"/>
+        <br/><br/>
+        <label>IQ Kp:</label>
+        <input id="iqKp" type="number" value="50"/>
+        <label>IQ Ki:</label>
+        <input id="iqKi" type="number" value="50"/>
+        <button onclick="writePID_ROM()">Write PID ROM</button>
+      </div>
+      <div class="sub-section">
+        <h3>Encoder / Zero</h3>
+        <button onclick="readEncoder()">Read Encoder</button>
+        <input id="encoderVal" type="number" value="0"/>
+        <button onclick="writeEncoderZero()">Set Encoder Zero</button>
+        <button onclick="writeCurrentPosZero()">Write Current Pos as Zero</button>
+      </div>
+      <div class="sub-section">
+        <h3>Acceleration</h3>
+        <label>Accel (0.01 dps^2):</label>
+        <input id="accelVal" type="number" value="1000"/>
+        <button onclick="writeAcceleration()">Write Accel</button>
+        <button onclick="readAcceleration()">Read Accel</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    let socket = io();
+    let lastCommandValue = null;
+    let charts = {};
+    
+    // Initialize a Chart.js instance for each joint
+    for (let i = 1; i <= 7; i++) {
+      let ctx = document.getElementById('chart-' + i).getContext('2d');
+      charts[i] = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            { label: 'Position (deg)', data: [], borderColor: 'blue', fill: false },
+            { label: 'Speed (deg/s)', data: [], borderColor: 'red', fill: false },
+            { label: 'Commanded Input', data: [], borderColor: 'green', borderDash: [5,5], fill: false },
+            { label: 'Torque', data: [], borderColor: 'purple', fill: false }
+          ]
+        },
+        options: {
+          animation: false,
+          scales: { x: { display: false } }
+        }
+      });
+    }
+
+    // Multi Joint Command Functions
+    function sendMultiJointCommand() {
+      let angles = [];
+      let speeds = [];
+      for (let i = 1; i <= 7; i++) {
+        // Read angle in degrees and convert to radians
+        let angleDeg = parseFloat(document.getElementById('multiAngle-' + i).value);
+        let angleRad = angleDeg * Math.PI / 180;
+        angles.push(angleRad);
+        speeds.push(parseFloat(document.getElementById('multiSpeed-' + i).value));
+      }
+      socket.emit('sendCommand', { cmd: 'setMultiJointAngles', angles: angles, speeds: speeds });
+    }
+    
+    function emergencyStop() {
+      // Send motorStop command to all joints
+      for (let i = 1; i <= 7; i++) {
+        socket.emit('sendCommand', { cmd: 'motorStop', motorID: i });
+      }
+    }
+    
+    function saveCurrentSet() {
+      let setName = document.getElementById('setName').value.trim();
+      if (!setName) {
+        alert("Please provide a name for the set.");
+        return;
+      }
+      let angles = [];
+      let speeds = [];
+      for (let i = 1; i <= 7; i++) {
+        let angleDeg = document.getElementById('multiAngle-' + i).value;
+        let speed = document.getElementById('multiSpeed-' + i).value;
+        angles.push(angleDeg);
+        speeds.push(speed);
+      }
+      savedSets[setName] = { angles: angles, speeds: speeds };
+      updateSavedSetsDropdown();
+      alert("Set saved as '" + setName + "'");
+    }
+    
+    function updateSavedSetsDropdown() {
+      let dropdown = document.getElementById('savedSetsDropdown');
+      // Clear all options except the first placeholder
+      dropdown.options.length = 1;
+      for (let name in savedSets) {
+        let option = document.createElement("option");
+        option.value = name;
+        option.text = name;
+        dropdown.add(option);
+      }
+    }
+    
+    function loadSavedSet() {
+      let dropdown = document.getElementById('savedSetsDropdown');
+      let selectedName = dropdown.value;
+      if (selectedName && savedSets[selectedName]) {
+        let set = savedSets[selectedName];
+        for (let i = 1; i <= 7; i++) {
+          document.getElementById('multiAngle-' + i).value = set.angles[i-1];
+          document.getElementById('multiSpeed-' + i).value = set.speeds[i-1];
+        }
+      }
+    }
+    
+    // Local command functions for each card
+    function sendLocalCmd(obj) {
+      socket.emit('sendCommand', obj);
+      if (obj.value !== undefined) {
+        lastCommandValue = obj.value;
+      }
+    }
+    
+    function applyLocalTorque(jointId) {
+      let val = parseInt(document.getElementById('torqueVal-' + jointId).value);
+      sendLocalCmd({cmd:'setTorque', motorID: jointId, value: val});
+    }
+    
+    function applyLocalPosition(jointId) {
+      let pos_val = parseInt(document.getElementById('posVal-' + jointId).value);
+      let speed_val = parseInt(document.getElementById('posSpeedVal-' + jointId).value);
+      sendLocalCmd({
+        cmd:'setMultiAngleWithSpeed',
+        motorID: jointId,
+        angle: pos_val,
+        maxSpeed: speed_val
+      });
+    }
+    
+    // Global command functions for PID, Encoder, and Acceleration
+    function getGlobalSelectedJoint() {
+      return parseInt(document.getElementById('globalJointSelect').value);
+    }
+    
+    function writePID_ROM() {
+      let angKp = parseInt(document.getElementById('angKp').value);
+      let angKi = parseInt(document.getElementById('angKi').value);
+      let spdKp = parseInt(document.getElementById('spdKp').value);
+      let spdKi = parseInt(document.getElementById('spdKi').value);
+      let iqKp  = parseInt(document.getElementById('iqKp').value);
+      let iqKi  = parseInt(document.getElementById('iqKi').value);
+      sendGlobalCmd({
+        cmd:'writePID_ROM',
+        motorID: getGlobalSelectedJoint(),
+        angKp, angKi, spdKp, spdKi, iqKp, iqKi
+      });
+    }
+    
+    function readEncoder() {
+      sendGlobalCmd({cmd:'readEncoder', motorID: getGlobalSelectedJoint()});
+    }
+    
+    function writeEncoderZero() {
+      let val = parseInt(document.getElementById('encoderVal').value);
+      sendGlobalCmd({cmd:'writeEncoderOffset', motorID: getGlobalSelectedJoint(), encoderValue: val});
+    }
+    
+    function writeCurrentPosZero() {
+      sendGlobalCmd({cmd:'writeCurrentPosAsZero', motorID: getGlobalSelectedJoint()});
+    }
+    
+    function writeAcceleration() {
+      let val = parseInt(document.getElementById('accelVal').value);
+      sendGlobalCmd({cmd:'writeAcceleration', motorID: getGlobalSelectedJoint(), accelVal: val});
+    }
+    
+    function readAcceleration() {
+      sendGlobalCmd({cmd:'readAcceleration', motorID: getGlobalSelectedJoint()});
+    }
+    
+    function sendGlobalCmd(obj) {
+      socket.emit('sendCommand', obj);
+      if (obj.value !== undefined) {
+        lastCommandValue = obj.value;
+      }
+    }
+    
+    // Update each card and its corresponding chart when new data arrives
+    socket.on('motorStates', (msg) => {
+      for (let i = 1; i <= 7; i++) {
+        let motor = msg.motors[String(i)];
+        let card = document.getElementById("card-" + i);
+        if (motor) {
+          // Update the data fields
+          card.querySelector(".temp").innerText = motor.temp.toFixed(2);
+          card.querySelector(".torque").innerText = motor.torqueA.toFixed(2);
+          card.querySelector(".speed").innerText = motor.speedDeg_s.toFixed(2);
+          card.querySelector(".position").innerText = motor.posDeg.toFixed(6);
+          card.querySelector(".enc").innerText = (motor.encoder_val ? motor.encoder_val.toFixed(6) : '--');
+          card.querySelector(".error").innerText = (motor.error && motor.error != 0) ? 'YES' : 'NO';
+          card.querySelector(".pos_remapped_rad").innerText = (motor.positionRad_Mapped ? motor.positionRad_Mapped.toFixed(6) : '--');
+          card.querySelector(".pos_remapped_deg").innerText = (motor.positionDeg_Mapped ? motor.positionDeg_Mapped.toFixed(6) : '--');
+          card.querySelector(".position_multi").innerText = motor.multiTurnRaw.toFixed(6);
+          card.querySelector(".pos_remapped_rad_multi").innerText = (motor.multiTurnRad_Mapped ? motor.multiTurnRad_Mapped.toFixed(6) : '--');
+          card.querySelector(".pos_remapped_deg_multi").innerText = (motor.multiTurnDeg_Mapped ? motor.multiTurnDeg_Mapped.toFixed(6) : '--');
+
+          // Update the chart for this joint
+          let chart = charts[i];
+          let now = new Date().toLocaleTimeString();
+          chart.data.labels.push(now);
+          chart.data.datasets[0].data.push(motor.posDeg);
+          chart.data.datasets[1].data.push(motor.speedDeg_s);
+          chart.data.datasets[2].data.push(lastCommandValue !== null ? lastCommandValue : null);
+          chart.data.datasets[3].data.push(motor.torqueA);
+          if (chart.data.labels.length > 200) {
+            chart.data.labels.shift();
+            chart.data.datasets.forEach(ds => ds.data.shift());
+          }
+          chart.update('none');
+        } else {
+          // If no data, mark the card as disconnected
+          let dataSection = card.querySelector(".data-section");
+          dataSection.innerHTML = "<div class='error-disconnected'>Disconnected</div>";
+        }
+      }
+    });
+  </script>
+</body>
+</html>

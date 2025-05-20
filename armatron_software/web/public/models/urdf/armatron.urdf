@@ -1,0 +1,307 @@
+<?xml version="1.0"?>
+<robot name="my_robot" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Materials -->
+  <material name="charcoal_black">
+    <color rgba="0.2 0.2 0.2 1.0"/>
+  </material>
+
+  <!-- ======================= -->
+  <!--        World      -->
+  <!-- ======================= -->
+  <link name="world">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </visual>
+  </link>
+  <!-- ======================= -->
+  <!--        Demo Table      -->
+  <!-- ======================= -->
+  <link name="demo_table">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/demo_table.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/demo_table.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <!-- Dummy mass & inertia values -->
+      <mass value="1.0"/>
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+  </link>
+
+  <!-- <joint name="world_to_demo_table" type="fixed">
+    <parent link="world"/>
+    <child link="demo_table"/>
+    <origin xyz="0.6096 0 0" rpy="-1.57079632 0 1.57079632"/>
+  </joint> -->
+
+  <!-- ======================= -->
+  <!--       1_base_link      -->
+  <!-- ======================= -->
+  <link name="1_base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/1_base_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="charcoal_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/1_base_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+  </link>
+
+  <joint name="demo_table_to_1_base" type="fixed">
+    <parent link="demo_table"/>
+    <child link="1_base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ======================= -->
+  <!--      2_shoulder_link   -->
+  <!-- ======================= -->
+  <link name="2_shoulder_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/2_shoulder_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="charcoal_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/2_shoulder_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+  </link>
+
+  <!-- ======================= -->
+  <!--   3_upper_brachium_link -->
+  <!-- ======================= -->
+  <link name="3_upper_brachium_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/3_upper_brachium_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="charcoal_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/3_upper_brachium_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+  </link>
+
+  <!-- ======================= -->
+  <!--   4_lower_brachium_link -->
+  <!-- ======================= -->
+  <link name="4_lower_brachium_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/4_lower_brachium_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="charcoal_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/4_lower_brachium_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+  </link>
+
+  <!-- ======================= -->
+  <!--     5_upper_forearm_link -->
+  <!-- ======================= -->
+  <link name="5_upper_forearm_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/5_upper_forearm_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="charcoal_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/5_upper_forearm_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+  </link>
+
+  <!-- ======================= -->
+  <!--     6_lower_forearm_link -->
+  <!-- ======================= -->
+  <link name="6_lower_forearm_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/6_lower_forearm_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="charcoal_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/6_lower_forearm_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+  </link>
+
+  <!-- ======================= -->
+  <!--    7_diff_crossbar_link -->
+  <!-- ======================= -->
+  <link name="7_diff_crossbar_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/7_diff_crossbar_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="charcoal_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/7_diff_crossbar_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+  </link>
+
+  <!-- ======================= -->
+  <!--      8_diff_tool_link   -->
+  <!-- ======================= -->
+  <link name="8_diff_tool_link">
+    <visual>
+      <origin xyz="-0.04550 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/8_diff_tool_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="charcoal_black"/>
+    </visual>
+    <collision>
+      <origin xyz="-0.04550 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/8_diff_tool_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+  </link>
+
+  
+
+  <!-- ======================= -->
+  <!--         Joints          -->
+  <!-- ======================= -->
+
+  <joint name="J1" type="revolute">
+    <parent link="1_base_link"/>
+    <child link="2_shoulder_link"/>
+    <origin xyz="0 0 0.093107" rpy="0 0 1.855285"/>
+    <axis xyz="0 0 -1"/>
+    <limit lower="-6.28319" upper="6.28319" effort="1000" velocity="0.5"/>
+  </joint>
+
+  <joint name="J2" type="revolute">
+    <parent link="2_shoulder_link"/>
+    <child link="3_upper_brachium_link"/>
+    <origin xyz="0 -0.0049910 0.06826" rpy="0 0.3494533 0"/>
+    <axis xyz="0 -1 0"/>
+    <limit lower="-6.28319" upper="6.28319" effort="1000" velocity="0.5"/>
+  </joint>
+
+  <joint name="J3" type="revolute">
+    <parent link="3_upper_brachium_link"/>
+    <child link="4_lower_brachium_link"/>
+    <origin xyz="0.148 0.0075 0" rpy="1.514946 0 0"/>
+    <axis xyz="-1 0 0"/>
+    <limit lower="-6.28319" upper="6.28319" effort="1000" velocity="0.5"/>
+  </joint>
+
+  <joint name="J4" type="revolute">
+    <parent link="4_lower_brachium_link"/>
+    <child link="5_upper_forearm_link"/>
+    <origin xyz="0.137793 -0.00150 0" rpy="0 2.3423599 0"/>
+    <axis xyz="0 -1 0"/>
+    <limit lower="-6.28319" upper="6.28319" effort="1000" velocity="0.5"/>
+  </joint>
+
+  <joint name="J5" type="revolute">
+    <parent link="5_upper_forearm_link"/>
+    <child link="6_lower_forearm_link"/>
+    <origin xyz="0.133686 0.000111 0" rpy="-1.5573573 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-6.28319" upper="6.28319" effort="1000" velocity="0.5"/>
+  </joint>
+
+  <joint name="J6" type="revolute">
+    <parent link="6_lower_forearm_link"/>
+    <child link="7_diff_crossbar_link"/>
+    <origin xyz="0.17835 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-6.28319" upper="6.28319" effort="1000" velocity="0.5"/>
+  </joint>
+
+  <joint name="J7" type="revolute">
+    <parent link="7_diff_crossbar_link"/>
+    <child link="8_diff_tool_link"/>
+    <origin xyz="0.0455 0 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-6.28319" upper="6.28319" effort="1000" velocity="0.5"/>
+  </joint>
+
+</robot>

@@ -1,0 +1,24 @@
+
+# C++ build artifacts
+build/
+*.o
+*.so
+*.a
+*.swp
+*.out
+*.log
+
+# Node modules
+web/node_modules/
+deploy/web/*
+instructions.txt
+deploy/systemd/*
+deploy/real_time_daemon/*   
+
+# OS or editor files
+.DS_Store
+*.tmp
+*.bak
+
+# Python virtual environment
+.venv/  
