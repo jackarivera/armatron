@@ -22,3 +22,4 @@ deploy/real_time_daemon/*
 
 # Python virtual environment
 .venv/  
+controls/dependencies/kdl_parser
