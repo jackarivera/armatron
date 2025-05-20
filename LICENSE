@@ -1,21 +1,33 @@
-MIT License
+Modified MIT License
 
 Copyright (c) 2025 Jack Rivera
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
+of this software, associated documentation files, and hardware designs (collectively, the "Project"), to deal
+in the Project without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
+copies of the Project, and to permit persons to whom the Project is
 furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+copies or substantial portions of the Project.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+THE PROJECT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+OUT OF OR IN CONNECTION WITH THE PROJECT OR THE USE OR OTHER DEALINGS IN THE
+PROJECT.
+
+Additional Hardware Disclaimer:
+The hardware designs provided in this Project are for educational and experimental purposes only. 
+The creator(s) make no warranties about the safety, reliability, or suitability of these designs 
+for any particular purpose. Users are responsible for ensuring their own safety and compliance 
+with applicable laws and regulations when building, modifying, or using the hardware designs 
+provided in this Project.
+
+Acknowledgments:
+If you use this Project in your work, please acknowledge the original author (Jack Rivera) 
+in any publications, presentations, or other public disclosures. This can be done by including 
+a citation or reference to this repository in your work.
